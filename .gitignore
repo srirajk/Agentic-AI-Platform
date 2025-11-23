@@ -1,0 +1,42 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+/out/
+
+# Java / JVM
+*.class
+*.jar
+*.war
+*.ear
+# Maven
+/target/
+# Gradle
+/.gradle/
+/build/
+.gradle/
+# IDE/other
+.classpath
+.project
+.settings/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+# Virtual environments
+venv/
+.venv/
+env/
+env.bak/
+venv.bak/
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# macOS
+.DS_Store
