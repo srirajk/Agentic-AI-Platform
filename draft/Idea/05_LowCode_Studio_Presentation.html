@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agentic Platform - Low-Code Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --canvas-bg: #0f172a;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --node-trigger: #3b82f6;
+            --node-action: #10b981;
+            --node-logic: #f59e0b;
+            --node-ai: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            height: 60px;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .studio-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workflow-name {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn {
+            background-color: var(--accent-success);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .action-btn.secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Main Layout */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Left Panel - Nodes */
+        .nodes-panel {
+            width: 240px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .panel-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .node-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .draggable-node {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .draggable-node:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(2px);
+        }
+
+        /* Canvas */
+        .canvas-area {
+            flex: 1;
+            background-color: var(--canvas-bg);
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-node {
+            position: absolute;
+            width: 180px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 2;
+        }
+
+        .canvas-node:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .node-header {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        .node-body {
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Node Colors */
+        .node-trigger .node-header {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: var(--node-trigger);
+        }
+
+        .node-ai .node-header {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--node-ai);
+        }
+
+        .node-logic .node-header {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--node-logic);
+        }
+
+        .node-action .node-header {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--node-action);
+        }
+
+        /* Connections (SVG) */
+        .connections-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        path {
+            fill: none;
+            stroke: var(--text-secondary);
+            stroke-width: 2;
+            opacity: 0.5;
+        }
+
+        /* Right Panel - Properties */
+        .properties-panel {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prop-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .prop-content {
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .form-textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        /* Bottom Log */
+        .execution-log {
+            height: 150px;
+            background-color: #0d1117;
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .log-time {
+            color: var(--text-secondary);
+        }
+
+        .log-success {
+            color: var(--accent-success);
+        }
+
+        .log-info {
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <div class="studio-title">
+                <i class="fa-solid fa-diagram-project" style="color: var(--accent-secondary);"></i>
+                LOW-CODE STUDIO
+            </div>
+            <div class="workflow-name">Customer_Support_Bot</div>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <button class="action-btn secondary"><i class="fa-solid fa-save"></i> Save</button>
+            <button class="action-btn"><i class="fa-solid fa-play"></i> Execute</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Nodes Panel -->
+        <div class="nodes-panel">
+            <div class="panel-title">Nodes Library</div>
+
+            <div class="node-category">
+                <div class="category-header" style="color: var(--node-trigger);">
+                    <i class="fa-solid fa-bolt"></i> Triggers
+                </div>
+                <div class="draggable-node">Webhook</div>
+                <div class="draggable-node">Schedule</div>
+                <div class="draggable-node">Email Watch</div>
+            </div>
+
+            <div class="node-category">
+                <div class="category-header" style="color: var(--node-ai);">
+                    <i class="fa-solid fa-brain"></i> AI / LLM
+                </div>
+                <div class="draggable-node">OpenAI GPT-4</div>
+                <div class="draggable-node">Anthropic Claude</div>
+                <div class="draggable-node">Vector Store</div>
+            </div>
+
+            <div class="node-category">
+                <div class="category-header" style="color: var(--node-logic);">
+                    <i class="fa-solid fa-code-branch"></i> Logic
+                </div>
+                <div class="draggable-node">If / Else</div>
+                <div class="draggable-node">Switch</div>
+                <div class="draggable-node">Loop</div>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-area">
+            <svg class="connections-layer">
+                <!-- Connection: Webhook -> AI -->
+                <path d="M 230 100 C 280 100, 280 100, 330 100" />
+                <!-- Connection: AI -> Condition -->
+                <path d="M 510 100 C 560 100, 560 100, 610 100" />
+                <!-- Connection: Condition -> High Priority -->
+                <path d="M 790 100 C 840 100, 840 50, 890 50" />
+                <!-- Connection: Condition -> Low Priority -->
+                <path d="M 790 100 C 840 100, 840 150, 890 150" />
+            </svg>
+
+            <!-- Node 1: Webhook -->
+            <div class="canvas-node node-trigger" style="top: 50px; left: 50px;">
+                <div class="node-header">
+                    <i class="fa-solid fa-bolt"></i> Webhook
+                </div>
+                <div class="node-body">
+                    POST /support
+                </div>
+            </div>
+
+            <!-- Node 2: AI -->
+            <div class="canvas-node node-ai" style="top: 50px; left: 330px;">
+                <div class="node-header">
+                    <i class="fa-solid fa-robot"></i> OpenAI GPT-4
+                </div>
+                <div class="node-body">
+                    Classify Intent
+                </div>
+            </div>
+
+            <!-- Node 3: Condition -->
+            <div class="canvas-node node-logic" style="top: 50px; left: 610px;">
+                <div class="node-header">
+                    <i class="fa-solid fa-code-branch"></i> Priority?
+                </div>
+                <div class="node-body">
+                    High vs Low
+                </div>
+            </div>
+
+            <!-- Node 4: Email (High) -->
+            <div class="canvas-node node-action" style="top: 0px; left: 890px;">
+                <div class="node-header">
+                    <i class="fa-solid fa-envelope"></i> Email Agent
+                </div>
+                <div class="node-body">
+                    alert@corp.com
+                </div>
+            </div>
+
+            <!-- Node 5: Slack (Low) -->
+            <div class="canvas-node node-action" style="top: 100px; left: 890px;">
+                <div class="node-header">
+                    <i class="fa-brands fa-slack"></i> Slack Msg
+                </div>
+                <div class="node-body">
+                    #support-triage
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties Panel -->
+        <div class="properties-panel">
+            <div class="prop-header">
+                <i class="fa-solid fa-robot" style="color: var(--node-ai);"></i> OpenAI GPT-4
+            </div>
+            <div class="prop-content">
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <select class="form-select">
+                        <option>gpt-4-turbo</option>
+                        <option>gpt-3.5-turbo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">System Prompt</label>
+                    <textarea
+                        class="form-textarea">You are a helpful support assistant. Analyze the incoming request and classify its priority.</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Temperature</label>
+                    <input type="range" class="form-input" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Execution Log -->
+    <div class="execution-log">
+        <div style="margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary);">EXECUTION LOG</div>
+        <div class="log-entry">
+            <span class="log-time">[14:30:01]</span>
+            <span class="log-success">✓ Webhook received payload</span>
+        </div>
+        <div class="log-entry">
+            <span class="log-time">[14:30:02]</span>
+            <span class="log-info">ℹ AI Node processing...</span>
+        </div>
+        <div class="log-entry">
+            <span class="log-time">[14:30:04]</span>
+            <span class="log-success">✓ AI Node output: "High Priority"</span>
+        </div>
+    </div>
+</body>
+
+</html>

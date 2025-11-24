@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agentic Platform - Tool Catalogue</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --card-bg: #334155;
+            --border-color: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .presentation-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 320px;
+        }
+
+        .catalogue-container {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .catalogue-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.75rem 0.5rem 2rem;
+            border-radius: 0.4rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .catalogue-content {
+            padding: 0.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .category-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-header {
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border-radius: 0.4rem;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .category-header:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .category-items {
+            padding-left: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .catalogue-item {
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .catalogue-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .item-icon {
+            width: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quick-actions {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .action-link {
+            display: block;
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Modal Simulation */
+        .modal-card {
+            width: 400px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .item-badge {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .feature-list {
+            margin: 1rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: white;
+        }
+
+        /* Label */
+        .view-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Column 1: Standard Panel -->
+    <div class="presentation-column">
+        <div class="view-label">1. Standard Panel (Expanded)</div>
+        <div class="catalogue-container">
+            <div class="catalogue-header">
+                <span>Tool Catalogue</span>
+                <i class="fa-solid fa-bars" style="color: var(--text-secondary); cursor: pointer;"></i>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search tools, agents...">
+            </div>
+            <div class="catalogue-content">
+                <div class="category-group">
+                    <div class="category-header" style="color: var(--accent-primary);">
+                        <span><i class="fa-solid fa-box"></i> Tools & Components</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </div>
+                    <div class="category-items">
+                        <div class="catalogue-item">
+                            <span class="item-icon"><i class="fa-solid fa-brain"></i></span>
+                            AI/LLM Models (45)
+                        </div>
+                        <div class="catalogue-item">
+                            <span class="item-icon"><i class="fa-solid fa-database"></i></span>
+                            Data Processing (34)
+                        </div>
+                        <div class="catalogue-item">
+                            <span class="item-icon"><i class="fa-solid fa-bolt"></i></span>
+                            Automation (23)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-header">
+                        <span><i class="fa-solid fa-robot"></i> Agent Library</span>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-header">
+                        <span><i class="fa-solid fa-plug"></i> Integrations</span>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-header">
+                        <span><i class="fa-solid fa-clipboard-list"></i> Templates</span>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="quick-actions">
+                <a href="#" class="action-link"><i class="fa-solid fa-plus"></i> Import Item</a>
+                <a href="#" class="action-link"><i class="fa-solid fa-star"></i> Favorites (12)</a>
+                <a href="#" class="action-link"><i class="fa-solid fa-chart-bar"></i> My Custom Items</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Column 2: Search Results -->
+    <div class="presentation-column">
+        <div class="view-label">2. Search Results</div>
+        <div class="catalogue-container">
+            <div class="catalogue-header">
+                <span>Tool Catalogue</span>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" value="openai" style="border-color: var(--accent-primary);">
+            </div>
+            <div class="catalogue-content">
+                <div style="padding: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">Found 4 results</div>
+
+                <div class="catalogue-item" style="background-color: rgba(255,255,255,0.05); margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 500;">OpenAI GPT-4</div>
+                        <div style="font-size: 0.75rem; margin-top: 0.2rem;">Most popular LLM model</div>
+                    </div>
+                    <i class="fa-solid fa-star" style="color: var(--accent-warning); font-size: 0.8rem;"></i>
+                </div>
+
+                <div class="catalogue-item" style="margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 500;">OpenAI GPT-3.5</div>
+                        <div style="font-size: 0.75rem; margin-top: 0.2rem;">Cost-effective option</div>
+                    </div>
+                </div>
+
+                <div class="catalogue-item" style="margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 500;">OpenAI API</div>
+                        <div style="font-size: 0.75rem; margin-top: 0.2rem;">Direct integration</div>
+                    </div>
+                </div>
+
+                <div class="catalogue-item" style="margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 500;">Assistant Agent</div>
+                        <div style="font-size: 0.75rem; margin-top: 0.2rem;">Pre-configured bot</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Column 3: Detail Modal -->
+    <div class="presentation-column">
+        <div class="view-label">3. Item Detail Modal</div>
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <span class="item-badge">AI Model</span>
+                    <div class="modal-title">OpenAI GPT-4</div>
+                    <div class="modal-subtitle">by OpenAI • v4.0.1</div>
+                </div>
+                <div
+                    style="background-color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-robot" style="color: black; font-size: 1.2rem;"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">
+                    GPT-4 is OpenAI's most advanced language model, offering superior reasoning, creativity, and factual
+                    accuracy. Best for complex tasks.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item"><i class="fa-solid fa-check" style="color: var(--accent-success);"></i>
+                        128k context window</div>
+                    <div class="feature-item"><i class="fa-solid fa-check" style="color: var(--accent-success);"></i>
+                        Multimodal support</div>
+                    <div class="feature-item"><i class="fa-solid fa-check" style="color: var(--accent-success);"></i>
+                        Advanced reasoning</div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        Cost per 1k tokens
+                        <div class="stat-value">$0.03</div>
+                    </div>
+                    <div class="stat-item">
+                        Avg Response Time
+                        <div class="stat-value">2.1s</div>
+                    </div>
+                    <div class="stat-item">
+                        Popularity
+                        <div class="stat-value" style="color: var(--accent-warning);">
+                            <i class="fa-solid fa-star"></i> 4.8/5
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        Used in
+                        <div class="stat-value">45 Agents</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Add to Project</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
